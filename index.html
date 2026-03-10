@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tyylikäs Kiihtyvä Elämän Kello</title>
+    <title>Logaritminen kello</title>
     <style>
         body { 
-            /* Tummanharmaa tausta */
+         
             background: #2c2c2c; 
             display: flex; 
             justify-content: center; 
@@ -17,10 +17,10 @@
             position: relative;
             width: 500px;
             height: 500px;
-            /* Lämmin murrettu hiekan sävy kellotaulussa */
+           
             background: #e2d9c8;
             border-radius: 50%;
-            /* Hillitty pronssinen/kuparinruskea kehys */
+           
             border: 12px solid #5d4a3e;
             box-shadow: 0 25px 60px rgba(0,0,0,0.5);
         }
@@ -32,7 +32,7 @@
             border-radius: 4px;
             pointer-events: none;
         }
-        /* Viisarit sovitettu väripalettiin */
+        
         #hour-hand { width: 8px; height: 110px; background: #2a211b; z-index: 3; }
         #minute-hand { width: 4px; height: 170px; background: #3d3129; z-index: 4; }
         #second-hand { width: 2px; height: 200px; background: #8b5a4d; z-index: 5; }
@@ -88,7 +88,7 @@
 
 <script>
     const container = document.getElementById('marks');
-    const k = 4.5; // Extreme-kiihtyvyys säilytetty
+    const k = 4.5; 
 
     function getExpAngle(value, max) {
         const t = value / max;
@@ -96,7 +96,7 @@
         return expVal * 360;
     }
 
-    // TUNTINUMEROT - 3 ja turhat välit poistettu
+   
     const visibleHours =[6, 7, 8, 9, 10, 11, 12];
     
     for (let i = 1; i <= 12; i++) {
@@ -106,7 +106,7 @@
             div.className = 'label';
             div.style.transform = `rotate(${angle}deg)`;
             
-            // Tekstin väriksi tumma ruskehtava harmaa
+         
             div.innerHTML = `<span style="display:inline-block; margin-top:55px; font-size:32px; font-weight:bold; color:#3d3129; transform:rotate(-${angle}deg)">${i}</span>`;
             container.appendChild(div);
         }
@@ -130,7 +130,7 @@
         tick.appendChild(line);
         container.appendChild(tick);
 
-        // Numerot 5 välein, 60 poistettu päällekkäisyyden välttämiseksi
+        
         if (i % 5 === 0 && i > 0 && i < 60) {
             const label = document.createElement('div');
             label.className = 'label';
