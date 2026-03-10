@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tyylikäs Kiihtyvä Elämän Kello</title>
+    <style>
+        body { 
+            /* Tummanharmaa tausta */
+            background: #2c2c2c; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0;
+            font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+        }
+        #clock-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            /* Lämmin murrettu hiekan sävy kellotaulussa */
+            background: #e2d9c8;
+            border-radius: 50%;
+            /* Hillitty pronssinen/kuparinruskea kehys */
+            border: 12px solid #5d4a3e;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+        }
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+        /* Viisarit sovitettu väripalettiin */
+        #hour-hand { width: 8px; height: 110px; background: #2a211b; z-index: 3; }
+        #minute-hand { width: 4px; height: 170px; background: #3d3129; z-index: 4; }
+        #second-hand { width: 2px; height: 200px; background: #8b5a4d; z-index: 5; }
+
+        .center-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 14px;
+            height: 14px;
+            background: #2a211b;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .tick {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+        
+        .tick-line {
+            display: inline-block;
+            width: 1px;
+            height: 6px; 
+            background: #a69a85;
+        }
+        .tick-line.thick {
+            width: 2px;
+            height: 14px;
+            background: #5d4a3e;
+        }
+        
+        .label {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div id="clock-container">
+    <div id="marks"></div>
+    <div id="hour-hand" class="hand"></div>
+    <div id="minute-hand" class="hand"></div>
+    <div id="second-hand" class="hand"></div>
+    <div class="center-dot"></div>
+</div>
+
+<script>
+    const container = document.getElementById('marks');
+    const k = 4.5; // Extreme-kiihtyvyys säilytetty
+
+    function getExpAngle(value, max) {
+        const t = value / max;
+        const expVal = (Math.pow(Math.E, k * t) - 1) / (Math.pow(Math.E, k) - 1);
+        return expVal * 360;
+    }
+
+    // TUNTINUMEROT - 3 ja turhat välit poistettu
+    const visibleHours =[6, 7, 8, 9, 10, 11, 12];
+    
+    for (let i = 1; i <= 12; i++) {
+        if (visibleHours.includes(i)) {
+            const angle = getExpAngle(i, 12);
+            const div = document.createElement('div');
+            div.className = 'label';
+            div.style.transform = `rotate(${angle}deg)`;
+            
+            // Tekstin väriksi tumma ruskehtava harmaa
+            div.innerHTML = `<span style="display:inline-block; margin-top:55px; font-size:32px; font-weight:bold; color:#3d3129; transform:rotate(-${angle}deg)">${i}</span>`;
+            container.appendChild(div);
+        }
+    }
+
+    // MINUUTTIVIIVAT JA -NUMEROT
+    for (let i = 0; i <= 60; i++) {
+        const angle = getExpAngle(i, 60);
+        
+        const tick = document.createElement('div');
+        tick.className = 'tick';
+        tick.style.transform = `rotate(${angle}deg)`;
+        const line = document.createElement('span');
+        
+        if (i % 5 === 0) {
+            line.className = 'tick-line thick';
+        } else {
+            line.className = 'tick-line';
+        }
+        
+        tick.appendChild(line);
+        container.appendChild(tick);
+
+        // Numerot 5 välein, 60 poistettu päällekkäisyyden välttämiseksi
+        if (i % 5 === 0 && i > 0 && i < 60) {
+            const label = document.createElement('div');
+            label.className = 'label';
+            label.style.transform = `rotate(${angle}deg)`;
+            
+            label.innerHTML = `<span style="display:inline-block; margin-top:24px; font-size:12px; font-weight:600; color:#7a6d5a; transform:rotate(-${angle}deg)">${i}</span>`;
+            container.appendChild(label);
+        }
+    }
+
+    function updateClock() {
+        const now = new Date();
+        const ms = now.getMilliseconds();
+        const s = now.getSeconds() + ms / 1000;
+        const m = now.getMinutes() + s / 60;
+        const h = (now.getHours() % 12) + m / 60;
+
+        const sDeg = getExpAngle(s, 60);
+        const mDeg = getExpAngle(m, 60);
+        const hDeg = getExpAngle(h, 12);
+
+        document.getElementById('second-hand').style.transform = `translateX(-50%) rotate(${sDeg}deg)`;
+        document.getElementById('minute-hand').style.transform = `translateX(-50%) rotate(${mDeg}deg)`;
+        document.getElementById('hour-hand').style.transform = `translateX(-50%) rotate(${hDeg}deg)`;
+        
+        requestAnimationFrame(updateClock);
+    }
+
+    updateClock();
+</script>
+
+</body>
+</html>
